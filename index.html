@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#1e40af" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Greenfield School" />
+<title>Greenfield School — Records Management</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Greenfield School Records","short_name":"Greenfield","start_url":".","display":"standalone","background_color":"%23ffffff","theme_color":"%231e40af","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22><rect width=%22192%22 height=%22192%22 rx=%2236%22 fill=%22%231e40af%22/><text x=%2296%22 y=%22128%22 font-size=%22110%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22 font-weight=%22bold%22>G</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}' />
+<link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%231e40af"/><text x="32" y="44" font-size="40" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold">G</text></svg>' />
+<style>
+  :root{
+    --bg:#f6f7fb; --surface:#ffffff; --surface-2:#f1f3f9; --border:#e5e7eb;
+    --text:#0f172a; --text-muted:#64748b; --primary:#1e40af; --primary-2:#2563eb;
+    --accent:#0ea5e9; --success:#16a34a; --warn:#f59e0b; --danger:#dc2626;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+    --radius:14px; --radius-sm:10px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  [data-theme="dark"]{
+    --bg:#0b1220; --surface:#111a2e; --surface-2:#0f172a; --border:#1f2a44;
+    --text:#e5e7eb; --text-muted:#94a3b8; --primary:#3b82f6; --primary-2:#60a5fa;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;min-height:100dvh}
+  a{color:var(--primary-2);text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit;font-size:15px}
+
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;min-height:100dvh}
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);padding:18px 14px;position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto}
+  .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--border);margin-bottom:12px}
+  .brand-logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:white;font-weight:800;font-size:22px}
+  .brand-name{font-weight:700;font-size:15px;line-height:1.1}
+  .brand-sub{font-size:11px;color:var(--text-muted)}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--text);font-size:14px;font-weight:500;cursor:pointer;border:none;background:transparent;text-align:left;width:100%}
+  .nav-item:hover{background:var(--surface-2)}
+  .nav-item.active{background:linear-gradient(90deg, rgba(30,64,175,.12), transparent);color:var(--primary);font-weight:600}
+  .nav-item svg{width:18px;height:18px;flex-shrink:0}
+  .nav-section{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:14px 12px 6px}
+
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{display:flex;align-items:center;gap:12px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+  .search{flex:1;max-width:480px;position:relative}
+  .search input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border);background:var(--surface-2);border-radius:10px;color:var(--text);outline:none}
+  .search input:focus{border-color:var(--primary-2);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-muted)}
+  .icon-btn{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;color:var(--text);position:relative}
+  .icon-btn:hover{background:var(--surface-2)}
+  .badge-dot{position:absolute;top:8px;right:9px;width:8px;height:8px;background:var(--danger);border-radius:50%;border:2px solid var(--surface)}
+  .user-chip{display:flex;align-items:center;gap:10px;padding:4px 10px 4px 4px;border:1px solid var(--border);border-radius:999px;background:var(--surface)}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#ec4899);color:white;display:grid;place-items:center;font-weight:700;font-size:13px}
+  .user-name{font-size:13px;font-weight:600;line-height:1.1}
+  .user-role{font-size:11px;color:var(--text-muted)}
+
+  .content{padding:20px;max-width:1400px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+  .page-title{font-size:22px;font-weight:700;margin:0}
+  .page-sub{color:var(--text-muted);font-size:13px;margin-top:2px}
+
+  .grid{display:grid;gap:14px}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .stat{display:flex;flex-direction:column;gap:6px}
+  .stat-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  .stat-value{font-size:24px;font-weight:700}
+  .stat-delta{font-size:12px;color:var(--success);font-weight:600}
+  .stat-delta.down{color:var(--danger)}
+  .stat-icon{width:38px;height:38px;border-radius:10px;background:rgba(37,99,235,.12);color:var(--primary);display:grid;place-items:center}
+  .stat-row{display:flex;align-items:center;justify-content:space-between}
+
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:600;font-size:14px}
+  .btn:hover{background:var(--surface-2)}
+  .btn-primary{background:var(--primary);color:white;border-color:var(--primary)}
+  .btn-primary:hover{background:var(--primary-2)}
+  .btn-danger{background:var(--danger);color:white;border-color:var(--danger)}
+  .btn-ghost{background:transparent;border-color:transparent}
+  .btn-sm{padding:6px 10px;font-size:12px;border-radius:8px}
+  .btn svg{width:16px;height:16px}
+
+  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+  th{background:var(--surface-2);font-weight:600;color:var(--text-muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;position:sticky;top:0}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface-2)}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+  .pill.green{background:rgba(22,163,74,.12);color:var(--success)}
+  .pill.red{background:rgba(220,38,38,.12);color:var(--danger)}
+  .pill.amber{background:rgba(245,158,11,.14);color:var(--warn)}
+  .pill.blue{background:rgba(37,99,235,.12);color:var(--primary)}
+  .pill.gray{background:var(--surface-2);color:var(--text-muted)}
+
+  .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em}
+  .field input,.field select,.field textarea{padding:10px 12px;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;outline:none}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary-2);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .field.full{grid-column:1/-1}
+
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:16px;overflow-x:auto}
+  .tab{padding:10px 14px;font-size:13px;font-weight:600;color:var(--text-muted);border:none;background:transparent;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(4px)}
+  .modal-backdrop.open{display:flex}
+  .modal{background:var(--surface);border-radius:var(--radius);max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+  .modal-head h3{margin:0;font-size:17px}
+  .modal-body{padding:20px}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border)}
+
+  .toasts{position:fixed;top:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:200;max-width:340px}
+  .toast{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);padding:12px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:14px;animation:slide .3s ease}
+  .toast.success{border-left-color:var(--success)}
+  .toast.error{border-left-color:var(--danger)}
+  .toast.warn{border-left-color:var(--warn)}
+  @keyframes slide{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+  .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:50}
+  .bottom-nav-inner{display:grid;grid-template-columns:repeat(5,1fr)}
+  .bnav{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:none;background:transparent;color:var(--text-muted);font-size:10px;font-weight:600}
+  .bnav.active{color:var(--primary)}
+  .bnav svg{width:22px;height:22px}
+
+  .login-wrap{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#1e3a8a 0%,#0ea5e9 100%)}
+  .login-card{background:var(--surface);border-radius:18px;padding:32px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .login-card h1{margin:0 0 4px;font-size:22px}
+  .login-card p{margin:0 0 20px;color:var(--text-muted);font-size:14px}
+  .login-hint{background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text-muted);margin-top:16px;line-height:1.5}
+
+  .receipt{background:white;color:#0f172a;padding:28px;border-radius:12px;font-family:Georgia,serif}
+  .receipt-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1e40af;padding-bottom:14px;margin-bottom:14px}
+  .receipt-school{font-size:20px;font-weight:700;color:#1e40af}
+  .receipt-meta{text-align:right;font-size:12px;color:#475569}
+  .receipt h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#475569}
+  .receipt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;font-size:14px}
+  .receipt-total{display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid #1e40af;font-size:18px;font-weight:700;margin-top:8px}
+  .receipt-foot{margin-top:30px;display:flex;justify-content:space-between;font-size:12px;color:#475569}
+
+  .chart{width:100%;height:220px}
+
+  @media (max-width: 960px){
+    .grid-4{grid-template-columns:repeat(2,1fr)}
+    .grid-3{grid-template-columns:repeat(2,1fr)}
+    .form-grid{grid-template-columns:1fr}
+  }
+  @media (max-width: 760px){
+    .app{grid-template-columns:1fr}
+    .sidebar{display:none}
+    .bottom-nav{display:block}
+    body{padding-bottom:72px}
+    .content{padding:14px}
+    .topbar{padding:10px 14px}
+    .user-chip .user-name,.user-chip .user-role{display:none}
+    .grid-4,.grid-3,.grid-2{grid-template-columns:1fr}
+    .page-title{font-size:18px}
+    th,td{padding:10px;font-size:13px}
+  }
+  @media print{
+    .sidebar,.topbar,.bottom-nav,.no-print{display:none !important}
+    .app{grid-template-columns:1fr}
+    .content{padding:0}
+    .card{box-shadow:none;border:1px solid #ccc}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="toasts" id="toasts"></div>
+<div class="modal-backdrop" id="modal"></div>
+
+<script>
+const DB_KEY = 'greenfield_db_v1';
+const defaultDB = () => {
+  const now = new Date().toISOString();
+  return {
+    settings:{
+      schoolName:"Greenfield International School",
+      address:"15 Adeola Odeku Street, Victoria Island, Lagos",
+      phone:"+234 801 234 5678",
+      email:"info@greenfieldschool.ng",
+      website:"www.greenfieldschool.ng",
+      currentSession:"2026/2027",
+      currentTerm:"First Term",
+      currency:"₦",
+      receiptPrefix:"GE",
+    },
+    users:[
+      {id:'u1',username:'admin',password:'admin123',name:'Mr. Adebayo Okafor',role:'super_admin',email:'admin@greenfield.ng'},
+      {id:'u2',username:'principal',password:'principal',name:'Mrs. Funke Williams',role:'admin',email:'principal@greenfield.ng'},
+      {id:'u3',username:'accountant',password:'acct123',name:'Jane Bello',role:'accountant',email:'accounts@greenfield.ng'},
+      {id:'u4',username:'teacher',password:'teacher',name:'Mr. Emeka Nwosu',role:'teacher',classId:'c4',email:'emeka@greenfield.ng'},
+      {id:'u5',username:'parent',password:'parent',name:'Mrs. Chioma Ade',role:'parent',studentId:'s1',email:'chioma.ade@gmail.com'},
+    ],
+    classes:[
+      {id:'c1',name:'Basic 1',level:'primary',session:'2026/2027'},
+      {id:'c2',name:'Basic 3',level:'primary',session:'2026/2027'},
+      {id:'c3',name:'Basic 5',level:'primary',session:'2026/2027'},
+      {id:'c4',name:'JSS 1',level:'junior',session:'2026/2027'},
+      {id:'c5',name:'JSS 2',level:'junior',session:'2026/2027'},
+      {id:'c6',name:'JSS 3',level:'junior',session:'2026/2027'},
+      {id:'c7',name:'SS 1',level:'senior',session:'2026/2027'},
+      {id:'c8',name:'SS 2',level:'senior',session:'2026/2027'},
+      {id:'c9',name:'SS 3',level:'senior',session:'2026/2027'},
+    ],
+    feeCategories:['Tuition','Registration','Examination','Books','Uniform','Transportation','Boarding','Other'],
+    paymentMethods:['Cash','Bank Transfer','POS','Online Payment','Other'],
+    students:[
+      {id:'s1',admissionNo:'GFS/2024/001',firstName:'John',lastName:'Ade',dob:'2012-05-14',gender:'Male',classId:'c4',session:'2026/2027',admissionDate:'2024-09-02',parentName:'Mrs. Chioma Ade',parentPhone:'+234 803 111 2222',parentEmail:'chioma.ade@gmail.com',address:'12 Admiralty Way, Lekki',emergencyContact:'+234 803 111 2222',status:'Active',photo:null},
+      {id:'s2',admissionNo:'GFS/2024/002',firstName:'Mary',lastName:'James',dob:'2013-08-22',gender:'Female',classId:'c4',session:'2026/2027',admissionDate:'2024-09-02',parentName:'Mr. Paul James',parentPhone:'+234 803 222 3333',parentEmail:'paul.james@gmail.com',address:'5 Bourdillon Road, Ikoyi',emergencyContact:'+234 803 222 3333',status:'Active',photo:null},
+      {id:'s3',admissionNo:'GFS/2023/015',firstName:'Ibrahim',lastName:'Musa',dob:'2011-02-10',gender:'Male',classId:'c5',session:'2026/2027',admissionDate:'2023-09-04',parentName:'Hajiya Aisha Musa',parentPhone:'+234 803 333 4444',parentEmail:'aisha.musa@gmail.com',address:'22 Ahmadu Bello Way, Kaduna',emergencyContact:'+234 803 333 4444',status:'Active',photo:null},
+      {id:'s4',admissionNo:'GFS/2025/008',firstName:'Chidinma',lastName:'Okeke',dob:'2014-11-30',gender:'Female',classId:'c3',session:'2026/2027',admissionDate:'2025-09-01',parentName:'Dr. Emeka Okeke',parentPhone:'+234 803 444 5555',parentEmail:'emeka.okeke@gmail.com',address:'7 Allen Avenue, Ikeja',emergencyContact:'+234 803 444 5555',status:'Active',photo:null},
+      {id:'s5',admissionNo:'GFS/2022/032',firstName:'Tunde',lastName:'Bakare',dob:'2009-07-18',gender:'Male',classId:'c7',session:'2026/2027',admissionDate:'2022-09-05',parentName:'Pastor Bakare',parentPhone:'+234 803 555 6666',parentEmail:'bakare@gmail.com',address:'15 Awolowo Road, Ibadan',emergencyContact:'+234 803 555 6666',status:'Active',photo:null},
+      {id:'s6',admissionNo:'GFS/2024/019',firstName:'Amina',lastName:'Yusuf',dob:'2012-03-05',gender:'Female',classId:'c4',session:'2026/2027',admissionDate:'2024-09-02',parentName:'Alhaji Yusuf',parentPhone:'+234 803 666 7777',parentEmail:'yusuf@gmail.com',address:'3 Wuse Zone 5, Abuja',emergencyContact:'+234 803 666 7777',status:'Active',photo:null},
+      {id:'s7',admissionNo:'GFS/2023/041',firstName:'David',lastName:'Eze',dob:'2010-12-12',gender:'Male',classId:'c6',session:'2026/2027',admissionDate:'2023-09-04',parentName:'Mrs. Ngozi Eze',parentPhone:'+234 803 777 8888',parentEmail:'ngozi.eze@gmail.com',address:'8 Trans Amadi, Port Harcourt',emergencyContact:'+234 803 777 8888',status:'Active',photo:null},
+      {id:'s8',admissionNo:'GFS/2025/022',firstName:'Fatimah',lastName:'Abdullahi',dob:'2014-06-25',gender:'Female',classId:'c3',session:'2026/2027',admissionDate:'2025-09-01',parentName:'Mallam Abdullahi',parentPhone:'+234 803 888 9999',parentEmail:'abdullahi@gmail.com',address:'14 Kano City, Kano',emergencyContact:'+234 803 888 9999',status:'Active',photo:null},
+      {id:'s9',admissionNo:'GFS/2021/055',firstName:'Samuel',lastName:'Ogunleye',dob:'2008-09-09',gender:'Male',classId:'c9',session:'2026/2027',admissionDate:'2021-09-06',parentName:'Chief Ogunleye',parentPhone:'+234 803 999 0000',parentEmail:'ogunleye@gmail.com',address:'20 Marina, Lagos Island',emergencyContact:'+234 803 999 0000',status:'Graduated',photo:null},
+      {id:'s10',admissionNo:'GFS/2024/027',firstName:'Grace',lastName:'Okonkwo',dob:'2013-04-17',gender:'Female',classId:'c5',session:'2026/2027',admissionDate:'2024-09-02',parentName:'Mrs. Ada Okonkwo',parentPhone:'+234 803 100 2003',parentEmail:'ada.okonkwo@gmail.com',address:'6 GRA, Enugu',emergencyContact:'+234 803 100 2003',status:'Active',photo:null},
+    ],
+    fees:[
+      {id:'f1',classId:'c4',session:'2026/2027',term:'First Term',category:'Tuition',amount:120000},
+      {id:'f2',classId:'c4',session:'2026/2027',term:'First Term',category:'Registration',amount:15000},
+      {id:'f3',classId:'c4',session:'2026/2027',term:'First Term',category:'Examination',amount:10000},
+      {id:'f4',classId:'c4',session:'2026/2027',term:'First Term',category:'Books',amount:25000},
+      {id:'f5',classId:'c5',session:'2026/2027',term:'First Term',category:'Tuition',amount:130000},
+      {id:'f6',classId:'c5',session:'2026/2027',term:'First Term',category:'Registration',amount:15000},
+      {id:'f7',classId:'c3',session:'2026/2027',term:'First Term',category:'Tuition',amount:95000},
+      {id:'f8',classId:'c3',session:'2026/2027',term:'First Term',category:'Books',amount:18000},
+      {id:'f9',classId:'c6',session:'2026/2027',term:'First Term',category:'Tuition',amount:140000},
+      {id:'f10',classId:'c7',session:'2026/2027',term:'First Term',category:'Tuition',amount:175000},
+      {id:'f11',classId:'c9',session:'2026/2027',term:'First Term',category:'Tuition',amount:200000},
+    ],
+    payments:[
+      {id:'p1',ref:'GE-2026-000142',studentId:'s1',amount:50000,date:'2026-09-10',method:'Bank Transfer',reference:'TRF-882341',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'First installment',status:'Successful'},
+      {id:'p2',ref:'GE-2026-000143',studentId:'s1',amount:50000,date:'2026-09-25',method:'POS',reference:'POS-44512',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'',status:'Successful'},
+      {id:'p3',ref:'GE-2026-000144',studentId:'s2',amount:170000,date:'2026-09-05',method:'Online Payment',reference:'PAY-77812',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'system',notes:'Paid via Paystack',status:'Successful'},
+      {id:'p4',ref:'GE-2026-000145',studentId:'s3',amount:75000,date:'2026-09-28',method:'Cash',reference:'CSH-9912',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'',status:'Successful'},
+      {id:'p5',ref:'GE-2026-000146',studentId:'s4',amount:60000,date:'2026-09-15',method:'Bank Transfer',reference:'TRF-11223',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'',status:'Successful'},
+      {id:'p6',ref:'GE-2026-000147',studentId:'s5',amount:200000,date:'2026-09-02',method:'Bank Transfer',reference:'TRF-55661',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'Full payment',status:'Successful'},
+      {id:'p7',ref:'GE-2026-000148',studentId:'s6',amount:40000,date:'2026-09-20',method:'POS',reference:'POS-3312',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'',status:'Successful'},
+      {id:'p8',ref:'GE-2026-000149',studentId:'s7',amount:100000,date:'2026-09-18',method:'Bank Transfer',reference:'TRF-99812',category:'Tuition',session:'2026/2027',term:'First Term',recordedBy:'u3',notes:'',status:'Successful'},
+    ],
+    items:[
+      {id:'i1',name:'Mathematics Textbook',category:'Textbooks',stock:120,distributed:45,condition:'New',supplier:'University Press',dateAdded:'2026-08-15',notes:''},
+      {id:'i2',name:'English Language Textbook',category:'Textbooks',stock:120,distributed:45,condition:'New',supplier:'University Press',dateAdded:'2026-08-15',notes:''},
+      {id:'i3',name:'School Uniform (Set)',category:'Uniforms',stock:200,distributed:88,condition:'New',supplier:'Lagos Textiles',dateAdded:'2026-08-20',notes:''},
+      {id:'i4',name:'Exercise Book (Pack of 10)',category:'Stationery',stock:300,distributed:150,condition:'New',supplier:'PaperMills Ltd',dateAdded:'2026-08-10',notes:''},
+      {id:'i5',name:'School Bag',category:'Accessories',stock:80,distributed:30,condition:'New',supplier:'BagWorld',dateAdded:'2026-08-18',notes:''},
+      {id:'i6',name:'Student ID Card',category:'Identification',stock:500,distributed:320,condition:'New',supplier:'ID Solutions',dateAdded:'2026-08-05',notes:''},
+      {id:'i7',name:'Sports Jersey',category:'Sportswear',stock:150,distributed:60,condition:'New',supplier:'Sporty Gear',dateAdded:'2026-08-22',notes:''},
+      {id:'i8',name:'Scientific Calculator',category:'Learning Materials',stock:90,distributed:72,condition:'New',supplier:'Casio Nigeria',dateAdded:'2026-08-25',notes:'Low stock'},
+    ],
+    distributions:[
+      {id:'d1',studentId:'s1',itemId:'i1',quantity:1,date:'2026-09-03',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d2',studentId:'s1',itemId:'i2',quantity:1,date:'2026-09-03',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d3',studentId:'s2',itemId:'i1',quantity:1,date:'2026-09-03',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d4',studentId:'s2',itemId:'i3',quantity:2,date:'2026-09-04',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:'2 sets of uniform'},
+      {id:'d5',studentId:'s3',itemId:'i1',quantity:1,date:'2026-09-03',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d6',studentId:'s4',itemId:'i4',quantity:1,date:'2026-09-05',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d7',studentId:'s5',itemId:'i8',quantity:1,date:'2026-09-06',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+      {id:'d8',studentId:'s6',itemId:'i6',quantity:1,date:'2026-09-02',session:'2026/2027',term:'First Term',condition:'New',issuedBy:'u2',notes:''},
+    ],
+    notifications:[
+      {id:'n1',text:'₦50,000 payment recorded for John Ade',time:'2026-09-25T10:42:00',read:false,userId:'u1'},
+      {id:'n2',text:'2 textbooks issued to Mary James',time:'2026-09-25T09:15:00',read:false,userId:'u1'},
+      {id:'n3',text:'New student Fatimah Abdullahi registered',time:'2026-09-20T14:20:00',read:true,userId:'u1'},
+      {id:'n4',text:'Scientific Calculator stock running low (18 remaining)',time:'2026-09-22T08:00:00',read:false,userId:'u1'},
+      {id:'n5',text:'Online payment of ₦170,000 received for Mary James',time:'2026-09-05T11:30:00',read:true,userId:'u1'},
+    ],
+    auditLogs:[
+      {id:'a1',action:'Payment recorded',actor:'Jane Bello',details:'₦50,000 for John Ade (GE-2026-000143)',time:'2026-09-25T10:42:00'},
+      {id:'a2',action:'Item issued',actor:'Mrs. Funke Williams',details:'2 textbooks to Mary James',time:'2026-09-25T09:15:00'},
+      {id:'a3',action:'Student added',actor:'Mrs. Funke Williams',details:'Fatimah Abdullahi (GFS/2025/022)',time:'2026-09-20T14:20:00'},
+      {id:'a4',action:'Payment recorded',actor:'Jane Bello',details:'₦170,000 for Mary James (online)',time:'2026-09-05T11:30:00'},
+    ],
+  };
+};
+
+let DB = loadDB();
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(DB_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  const fresh = defaultDB();
+  localStorage.setItem(DB_KEY, JSON.stringify(fresh));
+  return fresh;
+}
+function saveDB(){ localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
+function resetDB(){ DB = defaultDB(); saveDB(); render(); }
+
+const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+const fmt = n => '₦' + (Number(n)||0).toLocaleString('en-NG');
+const fmtDate = d => { if(!d) return '—'; const x=new Date(d); return x.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); };
+const fmtDateTime = d => { if(!d) return '—'; const x=new Date(d); return x.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); };
+const byId = (arr,id) => arr.find(x=>x.id===id);
+const initials = name => name.split(' ').map(s=>s[0]).slice(0,2).join('').toUpperCase();
+const uid = p => p + '_' + Math.random().toString(36).slice(2,9);
+
+function toast(msg, type='success'){
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(100%)'; el.style.transition='.3s'; }, 2800);
+  setTimeout(()=>el.remove(), 3200);
+}
+
+function confirmDialog(message){
+  return new Promise(resolve=>{
+    openModal({
+      title:'Are you sure?',
+      body:`<p style="margin:0;color:var(--text-muted)"><LaTex>id_1</LaTex>('#modal');
+  m.innerHTML = `
+    <div class="modal" style="<LaTex>id_2</LaTex>{title}</h3>
+        <button class="icon-btn" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body"><LaTex>id_3</LaTex>{actions.length?`<div class="modal-foot">${actions.map((a,i)=>`<button class="btn ${a.primary?'btn-primary':''} <LaTex>id_4</LaTex>{i}"><LaTex>id_5</LaTex>{i}"]`).onclick = a.onClick;
+  });
+}
+function closeModal(){ $('#modal').classList.remove('open'); }
+
+let currentUser = JSON.parse(sessionStorage.getItem('gf_user')||'null');
+function login(username, password){
+  const u = DB.users.find(x=>x.username===username && x.password===password);
+  if(!u) return false;
+  currentUser = u;
+  sessionStorage.setItem('gf_user', JSON.stringify(u));
+  return true;
+}
+function logout(){ currentUser=null; sessionStorage.removeItem('gf_user'); render(); }
+function can(roleList){ return roleList.includes(currentUser.role); }
+
+function studentTotalFees(studentId){
+  const s = byId(DB.students, studentId);
+  if(!s) return 0;
+  return DB.fees.filter(f=>f.classId===s.classId && f.session===s.session && f.term===DB.settings.currentTerm)
+    .reduce((a,f)=>a+f.amount,0);
+}
+function studentPaid(studentId){
+  return DB.payments.filter(p=>p.studentId===studentId && p.status==='Successful').reduce((a,p)=>a+p.amount,0);
+}
+function studentBalance(studentId){ return Math.max(0, studentTotalFees(studentId)-studentPaid(studentId)); }
+function nextReceiptRef(){
+  const n = DB.payments.length + 1;
+  return `${DB.settings.receiptPrefix}-<LaTex>id_6</LaTex>{String(n).padStart(6,'0')}`;
+}
+function addAudit(action, details){
+  DB.auditLogs.unshift({id:uid('a'),action,actor:currentUser?.name||'System',details,time:new Date().toISOString()});
+  if(DB.auditLogs.length>500) DB.auditLogs.length=500;
+}
+function addNotification(text, userId='u1'){
+  DB.notifications.unshift({id:uid('n'),text,time:new Date().toISOString(),read:false,userId});
+}
+
+const state = { route:'dashboard', params:{}, studentTab:'overview' };
+function navigate(route, params={}){ state.route=route; state.params=params; render(); window.scrollTo(0,0); }
+
+function renderLogin(){
+  $('#root').innerHTML = `
+    <div class="login-wrap">
+      <div class="login-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+          <div class="brand-logo">G</div>
+          <div>
+            <div style="font-weight:700;font-size:17px">Greenfield School</div>
+            <div style="font-size:12px;color:var(--text-muted)">Records Management System</div>
+          </div>
+        </div>
+        <h1>Welcome back</h1>
+        <p>Sign in to continue to your dashboard</p>
+        <form id="loginForm">
+          <div class="field" style="margin-bottom:12px">
+            <label>Username</label>
+            <input name="username" required autocomplete="username" placeholder="e.g. admin"/>
+          </div>
+          <div class="field" style="margin-bottom:14px">
+            <label>Password</label>
+            <input name="password" type="password" required autocomplete="current-password" placeholder="••••••••"/>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" type="submit">Sign In</button>
+        </form>
+        <div class="login-hint">
+          <strong>Demo accounts:</strong><br>
+          Super Admin — <code>admin</code> / <code>admin123</code><br>
+          Administrator — <code>principal</code> / <code>principal</code><br>
+          Accountant — <code>accountant</code> / <code>acct123</code><br>
+          Teacher — <code>teacher</code> / <code>teacher</code><br>
+          Parent — <code>parent</code> / <code>parent</code>
+        </div>
+      </div>
+    </div>`;
+  $('#loginForm').onsubmit = e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    if(login(fd.get('username'), fd.get('password'))){
+      toast('Welcome, ' + currentUser.name.split(' ')[0] + '!');
+      navigate('dashboard');
+    } else {
+      toast('Invalid credentials','error');
+    }
+  };
+}
+
+const I = {
+  dash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
+  users:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  money:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>`,
+  box:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+  report:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>`,
+  settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+  bell:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>`,
+  sun:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`,
+  moon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+  search:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+  plus:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
+  close:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  print:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`,
+  download:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  edit:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  trash:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
+  eye:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  logout:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  log:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`,
+};
+
+function renderShell(){
+  const nav = [
+    {id:'dashboard',label:'Dashboard',icon:I.dash},
+    {id:'students',label:'Students',icon:I.users},
+    {id:'payments',label:'Payments',icon:I.money},
+    {id:'items',label:'Items',icon:I.box},
+    {id:'reports',label:'Reports',icon:I.report},
+  ];
+  const adminNav = [
+    {id:'inventory',label:'Inventory',icon:I.box},
+    {id:'classes',label:'Classes',icon:I.book},
+    {id:'audit',label:'Audit Log',icon:I.log},
+    {id:'settings',label:'Settings',icon:I.settings},
+  ];
+  const visibleNav = nav.filter(n=>{
+    if(currentUser.role==='parent') return ['dashboard','payments'].includes(n.id);
+    if(currentUser.role==='teacher') return ['dashboard','students'].includes(n.id);
+    return true;
+  });
+  const visibleAdmin = currentUser.role==='super_admin'||currentUser.role==='admin' ? adminNav : [];
+
+  $('#root').innerHTML = `
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-logo">G</div>
+          <div>
+            <div class="brand-name">Greenfield School</div>
+            <div class="brand-sub">Records Management</div>
+          </div>
+        </div>
+        <div class="nav-section">Main</div>
+        <nav class="nav" id="sideNav">
+          ${visibleNav.map(n=>`<button class="nav-item ${state.route===n.id?'active':''}" data-route="${n.id}">${n.icon}<span>${n.label}</span></button>`).join('')}
+        </nav>
+        <LaTex>id_7</LaTex>{visibleAdmin.map(n=>`<button class="nav-item <LaTex>id_8</LaTex>{n.id}"><LaTex>id_9</LaTex>{n.label}</span></button>`).join('')}
+          </nav>`:''}
+        <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border);margin-top:20px">
+          <button class="nav-item" onclick="logout()"><LaTex>id_10</LaTex>{I.search}
+            <input id="globalSearch" placeholder="Search students, payments, items..." />
+          </div>
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn"><LaTex>id_11</LaTex>{I.bell}
+            <LaTex>id_12</LaTex>{initials(currentUser.name)}</div>
+            <div>
+              <div class="user-name"><LaTex>id_13</LaTex>{roleLabel(currentUser.role)}</div>
+            </div>
+          </div>
+        </div>
+        <div class="content" id="pageContent"></div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="bottom-nav-inner">
+        <LaTex>id_14</LaTex>{state.route===n.id?'active':''}" data-route="${n.id}">${n.icon}<span>${n.label}</span></button>`).join('')}
+      </div>
+    </div>
+  `;
+  $$('.nav-item[data-route], .bnav[data-route]').forEach(b=>{
+    b.onclick = ()=>navigate(b.dataset.route);
+  });
+  $('#globalSearch').oninput = e => handleGlobalSearch(e.target.value);
+  updateThemeBtn();
+  renderPage();
+}
+
+function roleLabel(r){
+  return {super_admin:'Super Admin',admin:'Administrator',accountant:'Accountant',teacher:'Teacher',parent:'Parent/Guardian'}[r]||r;
+}
+
+let theme = localStorage.getItem('gf_theme') || 'light';
+function applyTheme(){ document.documentElement.setAttribute('data-theme', theme); }
+function toggleTheme(){ theme = theme==='light'?'dark':'light'; localStorage.setItem('gf_theme',theme); applyTheme(); updateThemeBtn(); }
+function updateThemeBtn(){ const b=$('#themeBtn'); if(b) b.innerHTML = theme==='light'?I.moon:I.sun; }
+applyTheme();
+
+function handleGlobalSearch(q){
+  q = q.trim().toLowerCase();
+  if(!q) return renderPage();
+  const students = DB.students.filter(s =>
+    (s.firstName+' '+s.lastName).toLowerCase().includes(q) ||
+    s.admissionNo.toLowerCase().includes(q) ||
+    s.parentName.toLowerCase().includes(q) ||
+    s.parentPhone.includes(q)
+  );
+  const payments = DB.payments.filter(p => p.ref.toLowerCase().includes(q));
+  const items = DB.items.filter(i => i.name.toLowerCase().includes(q));
+
+  $('#pageContent').innerHTML = `
+    <div class="page-head"><h1 class="page-title">Search results for "<LaTex>id_15</LaTex>{students.length?`
+      <div class="card" style="margin-bottom:14px">
+        <h3 style="margin:0 0 10px;font-size:15px">Students (${students.length})</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>Admission No</th><th>Class</th><th>Parent</th><th></th></tr></thead>
+          <tbody>${students.map(s=>`
+            <tr>
+              <td><strong><LaTex>id_16</LaTex>{s.lastName}</strong></td>
+              <td><LaTex>id_17</LaTex>{byId(DB.classes,s.classId)?.name||'—'}</td>
+              <td><LaTex>id_18</LaTex>{s.id}'})"><LaTex>id_19</LaTex>{payments.length?`
+      <div class="card" style="margin-bottom:14px">
+        <h3 style="margin:0 0 10px;font-size:15px">Payments (${payments.length})</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Reference</th><th>Student</th><th>Amount</th><th>Date</th><th>Method</th></tr></thead>
+          <tbody>${payments.map(p=>{const s=byId(DB.students,p.studentId);return `
+            <tr><td><strong><LaTex>id_20</LaTex>{s?s.firstName+' '+s.lastName:'—'}</td><td><LaTex>id_21</LaTex>{fmtDate(p.date)}</td><td><LaTex>id_22</LaTex>{items.length?`
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:15px">Items (${items.length})</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Item</th><th>Category</th><th>Remaining</th></tr></thead>
+          <tbody>${items.map(i=>`<tr><td><strong><LaTex>id_23</LaTex>{i.category}</td><td><LaTex>id_24</LaTex>{!students.length && !payments.length && !items.length ? `<div class="card" style="text-align:center;padding:40px;color:var(--text-muted)">No results found.</div>`:''}
+  `;
+}
+
+function renderPage(){
+  const pc = $('#pageContent'); if(!pc) return;
+  if(currentUser.role==='parent'){
+    if(!['dashboard','payments','notifications','student'].includes(state.route)) state.route='dashboard';
+  }
+  if(currentUser.role==='teacher'){
+    if(!['dashboard','students','student','notifications'].includes(state.route)) state.route='dashboard';
+  }
+  const pages = {
+    dashboard: renderDashboard,
+    students: renderStudents,
+    student: renderStudentProfile,
+    payments: renderPayments,
+    items: renderItems,
+    inventory: renderInventory,
+    classes: renderClasses,
+    reports: renderReports,
+    audit: renderAudit,
+    settings: renderSettings,
+    notifications: renderNotifications,
+  };
+  (pages[state.route] || renderDashboard)(pc);
+}
+
+function renderDashboard(root){
+  const active = DB.students.filter(s=>s.status==='Active');
+  const totalExpected = DB.students.filter(s=>s.status==='Active').reduce((a,s)=>a+studentTotalFees(s.id),0);
+  const totalPaid = DB.payments.filter(p=>p.status==='Successful').reduce((a,p)=>a+p.amount,0);
+  const outstanding = totalExpected - totalPaid;
+  const today = new Date().toISOString().slice(0,10);
+  const paidToday = DB.payments.filter(p=>p.status==='Successful' && p.date===today).reduce((a,p)=>a+p.amount,0);
+  const itemsDistributed = DB.distributions.reduce((a,d)=>a+d.quantity,0);
+
+  const recentPayments = [...DB.payments].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  const recentActivities = [...DB.auditLogs].slice(0,6);
+
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(); d.setMonth(d.getMonth()-i);
+    months.push({key:d.toISOString().slice(0,7), label:d.toLocaleString('en',{month:'short'})});
+  }
+  const paymentsByMonth = months.map(m=>({
+    label:m.label,
+    value: DB.payments.filter(p=>p.status==='Successful' && p.date.startsWith(m.key)).reduce((a,p)=>a+p.amount,0)
+  }));
+  const maxVal = Math.max(1, ...paymentsByMonth.map(p=>p.value));
+
+  const byClass = DB.classes.map(c=>({
+    name:c.name,
+    value: DB.payments.filter(p=>{
+      const s=byId(DB.students,p.studentId); return s && s.classId===c.id && p.status==='Successful';
+    }).reduce((a,p)=>a+p.amount,0)
+  })).filter(x=>x.value>0);
+  const maxClass = Math.max(1, ...byClass.map(x=>x.value));
+
+  root.innerHTML = `
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <div class="page-sub">${DB.settings.schoolName} • <LaTex>id_25</LaTex>{DB.settings.currentTerm}</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <LaTex>id_26</LaTex>{I.plus} Record Payment</button>`:''}
+        <LaTex>id_27</LaTex>{I.plus} Add Student</button>`:''}
+      </div>
+    </div>
+
+    <div class="grid grid-4" style="margin-bottom:16px">
+      <LaTex>id_28</LaTex>{statCard('Active Students', active.length, `${DB.students.length-active.length} inactive`, I.users, 'green')}
+      ${statCard('Total Expected', fmt(totalExpected), 'This term', I.money)}
+      <LaTex>id_29</LaTex>{statCard('Outstanding', fmt(outstanding), 'Balance due', I.money, outstanding>0?'red':'green')}
+      <LaTex>id_30</LaTex>{statCard('Items Distributed', itemsDistributed, `${DB.items.length} items in inventory`, I.box)}
+      ${statCard('Classes', DB.classes.length, `${DB.settings.currentSession}`, I.book)}
+    </div>
+
+    <div class="grid grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <h3 style="margin:0;font-size:15px">Tuition Collected (Last 6 Months)</h3>
+        </div>
+        ${barChart(paymentsByMonth, maxVal, v=>fmt(v))}
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <h3 style="margin:0;font-size:15px">Payments by Class</h3>
+        </div>
+        <LaTex>id_31</LaTex>{recentPayments.map(p=>{const s=byId(DB.students,p.studentId);return `
+            <tr><td>${s?s.firstName+' '+s.lastName:'—'}</td><td><strong>${fmt(p.amount)}</strong></td><td>${fmtDate(p.date)}</td><td><span class="pill blue">${p.method}</span></td></tr>`;}).join('')}
+          </tbody></table></div>
+      </div>
+      <div class="card">
+        <h3 style="margin:0 0 10px;font-size:15px">Recent Activities</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <LaTex>id_32</LaTex>{I.log}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600">${a.action}</div>
+                <div style="font-size:12px;color:var(--text-muted)">${a.details}</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${a.actor} • ${fmtDateTime(a.time)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function statCard(label, value, sub, icon, color){
+  const bg = color==='green'?'rgba(22,163,74,.12)':color==='red'?'rgba(220,38,38,.12)':'rgba(37,99,235,.12)';
+  const fg = color==='green'?'var(--success)':color==='red'?'var(--danger)':'var(--primary)';
+  return `<div class="card stat">
+    <div class="stat-row">
+      <div>
+        <div class="stat-label"><LaTex>id_33</LaTex>{value}</div>
+        <div class="stat-delta <LaTex>id_34</LaTex>{sub}</div>
+      </div>
+      <div class="stat-icon" style="background:<LaTex>id_35</LaTex>{fg}"><LaTex>id_36</LaTex>{data.map((d,i)=>{
+      const w = 500/data.length;
+      const h = (d.value/max)*160;
+      const x = i*w + w*0.15;
+      const bw = w*0.7;
+      const y = 180-h;
+      return `
+        <rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="url(#grad)" />
+        <text x="${x+bw/2}" y="${y-6}" font-size="10" fill="var(--text-muted)" text-anchor="middle">${fmtFn(d.value)}</text>
+        <text x="${x+bw/2}" y="200" font-size="11" fill="var(--text-muted)" text-anchor="middle">${d.label}</text>
+      `;
+    }).join('')}
+    <defs>
+      <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#2563eb"/>
+        <stop offset="100%" stop-color="#0ea5e9"/>
+      </linearGradient>
+    </defs>
+  </svg>`;
+}
+
+function renderStudents(root){
+  let filterClass = '', filterStatus = '', filterQ = '';
+
+  function draw(){
+    let list = DB.students;
+    if(currentUser.role==='teacher') list = list.filter(s=>s.classId===currentUser.classId);
+    if(currentUser.role==='parent') list = list.filter(s=>s.id===currentUser.studentId);
+    if(filterClass) list = list.filter(s=>s.classId===filterClass);
+    if(filterStatus) list = list.filter(s=>s.status===filterStatus);
+    if(filterQ){
+      const q=filterQ.toLowerCase();
+      list = list.filter(s=>(s.firstName+' '+s.lastName).toLowerCase().includes(q)||s.admissionNo.toLowerCase().includes(q)||s.parentName.toLowerCase().includes(q));
+    }
+
+    root.innerHTML = `
+      <div class="page-head">
+        <div><h1 class="page-title">Students</h1><div class="page-sub">${list.length} student<LaTex>id_37</LaTex>{can(['super_admin','admin'])?`<button class="btn btn-primary" onclick="openStudentModal()">${I.plus} Add Student</button>`:''}
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="grid grid-3">
+          <div class="field"><label>Search</label><input id="fQ" value="${filterQ}" placeholder="Name, admission no, parent..."/></div>
+          <div class="field"><label>Class</label><select id="fC"><option value="">All classes</option><LaTex>id_38</LaTex>{c.id}" ${filterClass===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
+          <div class="field"><label>Status</label><select id="fS"><option value="">All</option><LaTex>id_39</LaTex>{s}" ${filterStatus===s?'selected':''}>${s}</option>`).join('')}</select></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Admission No</th><th>Class</th><th>Parent</th><th>Phone</th><th>Status</th><th>Balance</th><th></th></tr></thead>
+          <tbody>
+            <LaTex>id_40</LaTex>{initials(s.firstName+' '+s.lastName)}</div><strong>${s.firstName} ${s.lastName}</strong></div></td>
+                <td>${s.admissionNo}</td>
+                <td>${c?c.name:'—'}</td>
+                <td>${s.parentName}</td>
+                <td>${s.parentPhone}</td>
+                <td><span class="pill ${s.status==='Active'?'green':s.status==='Graduated'?'blue':s.status==='Suspended'?'red':'gray'}">${s.status}</span></td>
+                <td><strong style="color:${bal>0?'var(--danger)':'var(--success)'}">${fmt(bal)}</strong></td>
+                <td><button class="btn btn-sm" onclick="navigate('student',{id:'${s.id}'})">${I.eye} View</button></td>
+              </tr>`;
+            }).join(''):`<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--text-muted)">No students found</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+    $('#fQ').oninput = e=>{filterQ=e.target.value;draw();};
+    $('#fC').onchange = e=>{filterClass=e.target.value;draw();};
+    $('#fS').onchange = e=>{filterStatus=e.target.value;draw();};
+  }
+  draw();
+}
+
+function renderStudentProfile(root){
+  const s = byId(DB.students, state.params.id);
+  if(!s){ root.innerHTML = `<div class="card">Student not found.</div>`; return; }
+  const c = byId(DB.classes, s.classId);
+  const total = studentTotalFees(s.id);
+  const paid = studentPaid(s.id);
+  const bal = studentBalance(s.id);
+  const payments = DB.payments.filter(p=>p.studentId===s.id).sort((a,b)=>b.date.localeCompare(a.date));
+  const distributions = DB.distributions.filter(d=>d.studentId===s.id);
+  const feeBreakdown = DB.fees.filter(f=>f.classId===s.classId && f.session===s.session && f.term===DB.settings.currentTerm);
+  const logs = DB.auditLogs.filter(l=>l.details.includes(s.firstName+' '+s.lastName) || l.details.includes(s.admissionNo));
+
+  const tab = state.studentTab;
+
+  root.innerHTML = `
+    <div class="page-head">
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="btn" onclick="navigate('students')">← Back</button>
+        <div class="avatar" style="width:52px;height:52px;font-size:18px">${initials(s.firstName+' '+s.lastName)}</div>
+        <div>
+          <h1 class="page-title"><LaTex>id_41</LaTex>{s.lastName}</h1>
+          <div class="page-sub"><LaTex>id_42</LaTex>{c?c.name:'—'} • <span class="pill <LaTex>id_43</LaTex>{s.status}</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <LaTex>id_44</LaTex>{s.id}')">${I.edit} Edit</button>`:''}
+        ${can(['super_admin','admin','accountant'])?`<button class="btn btn-primary" onclick="openPaymentModal('${s.id}')">${I.plus} Record Payment</button>`:''}
+      </div>
+    </div>
+
+    <div class="grid grid-4" style="margin-bottom:16px">
+      <LaTex>id_45</LaTex>{statCard('Paid', fmt(paid), 'All time', I.money, 'green')}
+      <LaTex>id_46</LaTex>{statCard('Items Received', distributions.reduce((a,d)=>a+d.quantity,0), `${distributions.length} records`, I.box)}
+    </div>
+
+    <div class="tabs">
+      ${['overview','fees','payments','items','activity'].map(t=>`<button class="tab ${tab===t?'active':''}" onclick="state.studentTab='${t}';renderPage()">${t[0].toUpperCase()+t.slice(1)}</button>`).join('')}
+    </div>
+
+    <div id="tabContent"></div>
+  `;
+
+  const tc = $('#tabContent');
+  if(tab==='overview'){
+    tc.innerHTML = `
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="margin:0 0 12px;font-size:15px">Personal Information</h3>
+          <LaTex>id_47</LaTex>{infoRow('Admission No', s.admissionNo)}
+          <LaTex>id_48</LaTex>{infoRow('Gender', s.gender)}
+          <LaTex>id_49</LaTex>{infoRow('Session', s.session)}
+          <LaTex>id_50</LaTex>{infoRow('Address', s.address)}
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 12px;font-size:15px">Parent / Guardian</h3>
+          <LaTex>id_51</LaTex>{infoRow('Phone', s.parentPhone)}
+          <LaTex>id_52</LaTex>{infoRow('Emergency Contact', s.emergencyContact)}
+          <h3 style="margin:18px 0 12px;font-size:15px">Recent Payments</h3>
+          <LaTex>id_53</LaTex>{p.ref}</strong><div style="color:var(--text-muted);font-size:11px">${fmtDate(p.date)} • ${p.method}</div></div>
+              <strong>${fmt(p.amount)}</strong>
+            </div>`).join('') || `<div style="color:var(--text-muted);font-size:13px">No payments yet.</div>`}
+        </div>
+      </div>
+    `;
+  } else if(tab==='fees'){
+    tc.innerHTML = `
+      <div class="card">
+        <h3 style="margin:0 0 12px;font-size:15px">Fee Breakdown — ${DB.settings.currentTerm}</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Category</th><th style="text-align:right">Amount</th></tr></thead>
+          <tbody>
+            <LaTex>id_54</LaTex>{f.category}</td><td style="text-align:right"><strong>${fmt(f.amount)}</strong></td></tr>`).join('')}
+            <tr style="background:var(--surface-2)"><td><strong>Total</strong></td><td style="text-align:right"><strong>${fmt(total)}</strong></td></tr>
+            <tr><td>Amount Paid</td><td style="text-align:right;color:var(--success)"><strong>− <LaTex>id_55</LaTex>{bal>0?'var(--danger)':'var(--success)'}"><strong><LaTex>id_56</LaTex>{can(['super_admin','admin','accountant'])?`<button class="btn btn-sm btn-primary" onclick="openPaymentModal('${s.id}')">${I.plus} Record Payment</button>`:''}
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Reference</th><th>Date</th><th>Category</th><th>Method</th><th style="text-align:right">Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <LaTex>id_57</LaTex>{p.ref}</strong></td>
+                <td>${fmtDate(p.date)}</td>
+                <td>${p.category}</td>
+                <td><span class="pill blue">${p.method}</span></td>
+                <td style="text-align:right"><strong>${fmt(p.amount)}</strong></td>
+                <td><span class="pill ${p.status==='Successful'?'green':'red'}">${p.status}</span></td>
+                <td><button class="btn btn-sm" onclick="viewReceipt('${p.id}')">${I.eye} Receipt</button></td>
+              </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted)">No payments yet</td></tr>`}
+          </tbody>
+        </table></div>
+      </div>
+    `;
+  } else if(tab==='items'){
+    tc.innerHTML = `
+      <div class="card">
+        <h3 style="margin:0 0 12px;font-size:15px">Items Received</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Item</th><th>Category</th><th>Qty</th><th>Date</th><th>Condition</th><th>Issued By</th></tr></thead>
+          <tbody>
+            <LaTex>id_58</LaTex>{it?it.name:'—'}</strong></td><td>${it?it.category:'—'}</td><td>${d.quantity}</td><td>${fmtDate(d.date)}</td><td><span class="pill green">${d.condition}</span></td><td>${u?u.name:'—'}</td></tr>`;
+            }).join(''):`<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">No items issued</td></tr>`}
+          </tbody>
+        </table></div>
+      </div>
+    `;
+  } else if(tab==='activity'){
+    tc.innerHTML = `
+      <div class="card">
+        <h3 style="margin:0 0 12px;font-size:15px">Activity History</h3>
+        ${logs.length?logs.map(a=>`
+          <div style="display:flex;gap:10px;padding:10px;border-radius:8px;background:var(--surface-2);margin-bottom:6px">
+            <div style="width:32px;height:32px;border-radius:8px;background:rgba(37,99,235,.12);color:var(--primary);display:grid;place-items:center">${I.log}</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600">${a.action}</div>
+              <div style="font-size:12px;color:var(--text-muted)">${a.details}</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${a.actor} • ${fmtDateTime(a.time)}</div>
+            </div>
+          </div>`).join(''):`<div style="color:var(--text-muted);padding:20px;text-align:center">No activity recorded yet.</div>`}
+      </div>
+    `;
+  }
+}
+
+function infoRow(label, value){
+  return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px"><span style="color:var(--text-muted)">${label}</span><strong><LaTex>id_59</LaTex>{s?.firstName||''}"/></div>
+      <div class="field"><label>Last Name *</label><input name="lastName" required value="<LaTex>id_60</LaTex>{s?.admissionNo||`GFS/${new Date().getFullYear()}/${String(DB.students.length+1).padStart(3,'0')}`}"/></div>
+      <div class="field"><label>Date of Birth</label><input type="date" name="dob" value="<LaTex>id_61</LaTex>{s?.gender==='Male'?'selected':''}>Male</option><option <LaTex>id_62</LaTex>{DB.classes.map(c=>`<option value="${c.id}" ${s?.classId===c.id?'selected':''}>${c.name}</option>`).join('')}</select></div>
+      <div class="field"><label>Admission Date</label><input type="date" name="admissionDate" value="${s?.admissionDate||new Date().toISOString().slice(0,10)}"/></div>
+      <div class="field"><label>Status</label><select name="status"><LaTex>id_63</LaTex>{s?.status===x?'selected':''}>${x}</option>`).join('')}</select></div>
+      <div class="field"><label>Parent/Guardian Name *</label><input name="parentName" required value="${s?.parentName||''}"/></div>
+      <div class="field"><label>Parent Phone *</label><input name="parentPhone" required value="<LaTex>id_64</LaTex>{s?.parentEmail||''}"/></div>
+      <div class="field"><label>Emergency Contact</label><input name="emergencyContact" value="<LaTex>id_65</LaTex>{s?.address||''}</textarea></div>
+    </form>
+  `;
+  openModal({
+    title: s ? 'Edit Student' : 'Add New Student',
+    body,
+    actions:[
+      {label:'Cancel', onClick:closeModal},
+      {label: s?'Save Changes':'Add Student', primary:true, onClick:()=>{
+        const f = new FormData($('#studentForm'));
+        const data = Object.fromEntries(f.entries());
+        if(s){ Object.assign(s, data); addAudit('Student updated', `${data.firstName} <LaTex>id_66</LaTex>{data.firstName} <LaTex>id_67</LaTex>{data.admissionNo})`);
+          addNotification(`New student <LaTex>id_68</LaTex>{data.lastName} registered`);
+        }
+        saveDB(); closeModal(); toast(s?'Student updated':'Student added'); renderPage();
+      }}
+    ],
+    wide:true
+  });
+};
+
+function renderPayments(root){
+  let list = [...DB.payments].sort((a,b)=>b.date.localeCompare(a.date));
+  if(currentUser.role==='parent') list = list.filter(p=>p.studentId===currentUser.studentId);
+  let filterQ = '', filterMethod = '', filterFrom = '', filterTo = '';
+
+  function draw(){
+    let filtered = list;
+    if(filterQ){const q=filterQ.toLowerCase(); filtered = filtered.filter(p=>{const s=byId(DB.students,p.studentId);return p.ref.toLowerCase().includes(q)||(s&&(s.firstName+' '+s.lastName).toLowerCase().includes(q));});}
+    if(filterMethod) filtered = filtered.filter(p=>p.method===filterMethod);
+    if(filterFrom) filtered = filtered.filter(p=>p.date>=filterFrom);
+    if(filterTo) filtered = filtered.filter(p=>p.date<=filterTo);
+    const total = filtered.reduce((a,p)=>a+p.amount,0);
+
+    root.innerHTML = `
+      <div class="page-head">
+        <div><h1 class="page-title">Payments</h1><div class="page-sub"><LaTex>id_69</LaTex>{fmt(total)}</strong></div></div>
+        <LaTex>id_70</LaTex>{I.plus} Record Payment</button>`:''}
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="grid grid-4">
+          <div class="field"><label>Search</label><input id="pQ" value="<LaTex>id_71</LaTex>{DB.paymentMethods.map(m=>`<option ${filterMethod===m?'selected':''}>${m}</option>`).join('')}</select></div>
+          <div class="field"><label>From</label><input type="date" id="pF" value="<LaTex>id_72</LaTex>{filterTo}"/></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Reference</th><th>Student</th><th>Class</th><th>Date</th><th>Category</th><th>Method</th><th style="text-align:right">Amount</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <LaTex>id_73</LaTex>{p.ref}</strong></td>
+                <td>${s?s.firstName+' '+s.lastName:'—'}</td>
+                <td>${c?c.name:'—'}</td>
+                <td>${fmtDate(p.date)}</td>
+                <td>${p.category}</td>
+                <td><span class="pill blue">${p.method}</span></td>
+                <td style="text-align:right"><strong>${fmt(p.amount)}</strong></td>
+                <td><span class="pill ${p.status==='Successful'?'green':p.status==='Pending'?'amber':'red'}">${p.status}</span></td>
+                <td><button class="btn btn-sm" onclick="viewReceipt('${p.id}')">${I.eye} Receipt</button></td>
+              </tr>`;}).join(''):`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted)">No payments</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+    $('#pQ').oninput = e=>{filterQ=e.target.value;draw();};
+    $('#pM').onchange = e=>{filterMethod=e.target.value;draw();};
+    $('#pF').onchange = e=>{filterFrom=e.target.value;draw();};
+    $('#pT').onchange = e=>{filterTo=e.target.value;draw();};
+  }
+  draw();
+}
+
+window.openPaymentModal = function(studentId){
+  const body = `
+    <form id="payForm" class="form-grid">
+      <div class="field full"><label>Student *</label>
+        <select name="studentId" id="payStudent" required>
+          <option value="">Select student...</option>
+          <LaTex>id_74</LaTex>{s.id}" ${studentId===s.id?'selected':''}>${s.firstName} ${s.lastName} — ${s.admissionNo} (${byId(DB.classes,s.classId)?.name})</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Amount (₦) *</label><input type="number" name="amount" required min="1" id="payAmount"/></div>
+      <div class="field"><label>Date *</label><input type="date" name="date" required value="${new Date().toISOString().slice(0,10)}"/></div>
+      <div class="field"><label>Payment Method *</label><select name="method" required><LaTex>id_75</LaTex>{m}</option>`).join('')}</select></div>
+      <div class="field"><label>Fee Category *</label><select name="category" required><LaTex>id_76</LaTex>{c}</option>`).join('')}</select></div>
+      <div class="field"><label>Payment Reference</label><input name="reference" placeholder="Transaction / POS / TRF number"/></div>
+      <div class="field"><label>Session</label><input name="session" value="<LaTex>id_77</LaTex>{DB.settings.currentTerm}" readonly/></div>
+      <div class="field full"><label>Notes</label><textarea name="notes" rows="2"></textarea></div>
+    </form>
+  `;
+  openModal({
+    title:'Record Payment',
+    body,
+    actions:[
+      {label:'Cancel', onClick:closeModal},
+      {label:'Record Payment', primary:true, onClick:()=>{
+        const f = new FormData($('#payForm'));
+        const data = Object.fromEntries(f.entries());
+        if(!data.studentId){ toast('Please select a student','error'); return; }
+        const p = {
+          id: uid('p'),
+          ref: nextReceiptRef(),
+          studentId: data.studentId,
+          amount: Number(data.amount),
+          date: data.date,
+          method: data.method,
+          reference: data.reference||'',
+          category: data.category,
+          session: data.session,
+          term: data.term,
+          recordedBy: currentUser.id,
+          notes: data.notes||'',
+          status: 'Successful'
+        };
+        DB.payments.push(p);
+        const s = byId(DB.students, p.studentId);
+        addAudit('Payment recorded', `${fmt(p.amount)} for <LaTex>id_78</LaTex>{s.lastName} (<LaTex>id_79</LaTex>{fmt(p.amount)} payment recorded for <LaTex>id_80</LaTex>{s.lastName}`);
+        saveDB(); closeModal(); toast('Payment recorded: '+p.ref); renderPage();
+      }}
+    ],
+    wide:true
+  });
+};
+
+window.viewReceipt = function(pid){
+  const p = byId(DB.payments, pid); if(!p) return;
+  const s = byId(DB.students, p.studentId);
+  const c = s?byId(DB.classes,s.classId):null;
+  const paidBefore = DB.payments.filter(x=>x.studentId===p.studentId && x.status==='Successful' && x.date<p.date).reduce((a,x)=>a+x.amount,0);
+  const total = studentTotalFees(p.studentId);
+  const balBefore = Math.max(0, total - paidBefore);
+  const balAfter = Math.max(0, balBefore - p.amount);
+
+  const body = `
+    <div class="receipt" id="receiptPrint">
+      <div class="receipt-head">
+        <div>
+          <div class="receipt-school"><LaTex>id_81</LaTex>{DB.settings.address}<br><LaTex>id_82</LaTex>{DB.settings.email}</div>
+        </div>
+        <div class="receipt-meta">
+          <div><strong>OFFICIAL RECEIPT</strong></div>
+          <div>Ref: <LaTex>id_83</LaTex>{fmtDate(p.date)}</div>
+        </div>
+      </div>
+      <h4>Received From</h4>
+      <div class="receipt-row"><span>Student Name</span><strong><LaTex>id_84</LaTex>{s?s.admissionNo:'—'}</strong></div>
+      <div class="receipt-row"><span>Class</span><strong><LaTex>id_85</LaTex>{p.session} / <LaTex>id_86</LaTex>{p.category}</strong></div>
+      <div class="receipt-row"><span>Payment Method</span><strong><LaTex>id_87</LaTex>{p.reference||'—'}</strong></div>
+      <div class="receipt-row"><span>Amount Paid</span><strong style="color:#16a34a"><LaTex>id_88</LaTex>{fmt(total)}</span></div>
+      <div class="receipt-row"><span>Previous Balance</span><span><LaTex>id_89</LaTex>{fmt(p.amount)}</span></div>
+      <div class="receipt-total"><span>New Balance</span><span style="color:<LaTex>id_90</LaTex>{fmt(balAfter)}</span></div>
+      <div class="receipt-foot">
+        <div>Authorized Officer: <strong><LaTex>id_91</LaTex>{DB.settings.schoolName}</div>
+      </div>
+    </div>
+  `;
+  openModal({
+    title: 'Receipt — ' + p.ref,
+    body,
+    actions:[
+      {label:'Close', onClick:closeModal},
+      {label:`<LaTex>id_92</LaTex>{p.ref}</title><style>
+          body{font-family:Georgia,serif;padding:20px;color:#0f172a}
+          .receipt-head{display:flex;justify-content:space-between;border-bottom:2px solid #1e40af;padding-bottom:14px;margin-bottom:14px}
+          .receipt-school{font-size:20px;font-weight:700;color:#1e40af}
+          .receipt-meta{text-align:right;font-size:12px;color:#475569}
+          h4{margin:14px 0 6px;font-size:13px;text-transform:uppercase;color:#475569}
+          .receipt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #e2e8f0;font-size:14px}
+          .receipt-total{display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid #1e40af;font-size:18px;font-weight:700;margin-top:8px}
+          .receipt-foot{margin-top:30px;display:flex;justify-content:space-between;font-size:12px;color:#475569}
+        </style></head><body><LaTex>id_93</LaTex>{can(['super_admin','admin'])?`<button class="btn btn-primary" onclick="openDistributionModal()">${I.plus} Issue Item</button>`:''}
+      </div>
+      <div class="card" style="margin-bottom:14px">
+        <div class="grid grid-2">
+          <div class="field"><label>Search</label><input id="iQ" value="${filterQ}" placeholder="Item name..."/></div>
+          <div class="field"><label>Category</label><select id="iC"><option value="">All</option><LaTex>id_94</LaTex>{filterCat===c?'selected':''}>${c}</option>`).join('')}</select></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Student</th><th>Item</th><th>Category</th><th>Qty</th><th>Condition</th><th>Issued By</th></tr></thead>
+          <tbody>
+            ${DB.distributions.length?DB.distributions.map(d=>{
+              const s=byId(DB.students,d.studentId);const it=byId(DB.items,d.itemId);const u=byId(DB.users,d.issuedBy);
+              if(!it) return '';
+              if(filterQ && !it.name.toLowerCase().includes(filterQ.toLowerCase())) return '';
+              if(filterCat && it.category!==filterCat) return '';
+              return `<tr>
+                <td>${fmtDate(d.date)}</td>
+                <td>${s?s.firstName+' '+s.lastName:'—'}</td>
+                <td><strong>${it.name}</strong></td>
+                <td>${it.category}</td>
+                <td>${d.quantity}</td>
+                <td><span class="pill green">${d.condition}</span></td>
+                <td>${u?u.name:'—'}</td>
+              </tr>`;
+            }).join(''):`<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted)">No distributions</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+    `;
+    $('#iQ').oninput = e=>{filterQ=e.target.value;draw();};
+    $('#iC').onchange = e=>{filterCat=e.target.value;draw();};
+  }
+  draw();
+}
+
+window.openDistributionModal = function(){
+  const body = `
+    <form id="distForm" class="form-grid">
+      <div class="field full"><label>Student *</label>
+        <select name="studentId" required>
+          <option value="">Select student...</option>
+          ${DB.students.filter(s=>s.status==='Active').map(s=>`<option value="${s.id}">${s.firstName} ${s.lastName} — ${s.admissionNo}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Item *</label>
+        <select name="itemId" required>
+          <option value="">Select item...</option>
+          <LaTex>id_95</LaTex>{i.id}">${i.name} (${i.stock-i.distributed} available)</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Quantity *</label><input type="number" name="quantity" required min="1" value="1"/></div>
+      <div class="field"><label>Date</label><input type="date" name="date" value="<LaTex>id_96</LaTex>('#distForm'));
+        const data = Object.fromEntries(f.entries());
+        const it = byId(DB.items, data.itemId);
+        const avail = it.stock - it.distributed;
+        if(Number(data.quantity)>avail){ toast(`Only <LaTex>id_97</LaTex>{data.quantity}× <LaTex>id_98</LaTex>{s.firstName} <LaTex>id_99</LaTex>{data.quantity} <LaTex>id_100</LaTex>{s.firstName} <LaTex>id_101</LaTex>{it.name} stock running low (<LaTex>id_102</LaTex>{DB.items.length} items tracked</div></div>
+      <LaTex>id_103</LaTex>{I.plus} Add Item</button>`:''}
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Item</th><th>Category</th><th>Total Stock</th><th>Distributed</th><th>Remaining</th><th>Supplier</th><th>Date Added</th><th></th></tr></thead>
+        <tbody>
+          <LaTex>id_104</LaTex>{i.name}</strong></td>
+              <td>${i.category}</td>
+              <td>${i.stock}</td>
+              <td>${i.distributed}</td>
+              <td><strong style="color:${warn?'var(--danger)':'var(--text)'}">${rem}</strong> ${warn?'<span class="pill red">Low</span>':''}</td>
+              <td>${i.supplier||'—'}</td>
+              <td>${fmtDate(i.dateAdded)}</td>
+              <td>
+                ${can(['super_admin','admin'])?`<button class="btn btn-sm" onclick="openItemModal('${i.id}')"><LaTex>id_105</LaTex>{i?.name||''}"/></div>
+      <div class="field"><label>Category *</label><input name="category" required value="<LaTex>id_106</LaTex>{[...new Set(DB.items.map(x=>x.category))].map(c=>`<option value="${c}">`).join('')}</datalist>
+      </div>
+      <div class="field"><label>Total Stock *</label><input type="number" name="stock" required min="0" value="${i?.stock||0}"/></div>
+      <div class="field"><label>Supplier</label><input name="supplier" value="<LaTex>id_107</LaTex>{i?.dateAdded||new Date().toISOString().slice(0,10)}"/></div>
+      <div class="field"><label>Condition</label><select name="condition"><option <LaTex>id_108</LaTex>{i?.condition==='Used - Good'?'selected':''}>Used - Good</option></select></div>
+      <div class="field full"><label>Notes</label><textarea name="notes" rows="2"><LaTex>id_109</LaTex>('#itemForm'));
+        const data = Object.fromEntries(f.entries());
+        if(i){ Object.assign(i, data, {stock:Number(data.stock)}); }
+        else { DB.items.push({id:uid('i'), distributed:0, ...data, stock:Number(data.stock)}); }
+        addAudit(i?'Item updated':'Item added', data.name);
+        saveDB(); closeModal(); toast(i?'Item updated':'Item added'); renderPage();
+      }}
+    ],
+    wide:true
+  });
+};
+
+function renderClasses(root){
+  const levels = {primary:'Primary',junior:'Junior Secondary',senior:'Senior Secondary'};
+  root.innerHTML = `
+    <div class="page-head">
+      <div><h1 class="page-title">Classes</h1><div class="page-sub"><LaTex>id_110</LaTex>{DB.classes.length} classes</div></div>
+      <LaTex>id_111</LaTex>{I.plus} Add Class</button>`:''}
+    </div>
+    <LaTex>id_112</LaTex>{label}</h3>
+        <div class="grid grid-4">
+          ${cls.map(c=>{
+            const count = DB.students.filter(s=>s.classId===c.id && s.status==='Active').length;
+            return `<div style="padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)">
+              <div style="font-weight:700;font-size:15px">${c.name}</div>
+              <div style="color:var(--text-muted);font-size:12px;margin-top:4px"><LaTex>id_113</LaTex>{count!==1?'s':''}</div>
+              <LaTex>id_114</LaTex>{c.id}')">${I.edit} Edit</button>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+window.openClassModal = function(id){
+  const c = id?byId(DB.classes,id):null;
+  const body = `
+    <form id="classForm" class="form-grid">
+      <div class="field"><label>Class Name *</label><input name="name" required value="${c?.name||''}"/></div>
+      <div class="field"><label>Level *</label><select name="level">
+        <option value="primary" <LaTex>id_115</LaTex>{c?.level==='junior'?'selected':''}>Junior Secondary</option>
+        <option value="senior" <LaTex>id_116</LaTex>{c?.session||DB.settings.currentSession}"/></div>
+    </form>
+  `;
+  openModal({
+    title: c?'Edit Class':'Add Class',
+    body,
+    actions:[
+      {label:'Cancel', onClick:closeModal},
+      {label:c?'Save':'Add', primary:true, onClick:()=>{
+        const f = new FormData($('#classForm'));
+        const data = Object.fromEntries(f.entries());
+        if(c) Object.assign(c, data);
+        else DB.classes.push({id:uid('c'), ...data});
+        saveDB(); closeModal(); toast(c?'Class updated':'Class added'); renderPage();
+      }}
+    ]
+  });
+};
+
+function renderReports(root){
+  const reports = [
+    {id:'students',label:'Student List',desc:'All students with class and status',icon:I.users},
+    {id:'tu
